@@ -18,11 +18,13 @@ Barotropic_Instability/			- Directory containing all functions required to solve
 	Create_Grid_Barotropic.m	- Creates the grid input for Find_Modes_Barotropic.m and Find_Modes_Equiv_Barotropic.m
 	Create_Params_Barotropic.m	- Creates the parameters input for Find_Modes_Barotropic.m and Find_Modes_Equiv_Barotropic.m
 	Find_Modes_Barotropic.m		- Finds the frequency/growth rate and eigenfunctions for the barotropic problem
-	Find_Modes_Equiv_Barotropic.m	- Finds the frequency/growth rate and eigenfunctions for the equivalent barotropic problem
-Example_1_Kelvin_Waves_on_Shelf.m	- Idealised Kelvin and shelf wave example from Sec. 4.1
-Example_2_Quasi_Barotropic_Jet.m	- Idealised jet instability example from Sec. 4.2
-Example_3_Realistic_CTW_Modes.m		- Realistic CTWs example from Sec. 4.3
+	Find_Modes_Equiv_Barotropic.m		- Finds the frequency/growth rate and eigenfunctions for the equivalent barotropic problem
+Example_1_Kelvin_Waves_on_Shelf.m		- Idealised Kelvin and shelf wave example from Sec. 4.a
+Example_2_Quasi_Barotropic_Jet.m		- Idealised jet instability example from Sec. 4.b
+Example_3_Topographic_Destabilisation.m - Shelf wave instability example from Sec. 4.c
+Example_3_Realistic_CTW_Modes.m			- Realistic CTWs example from Sec. 4.d
 Gelderloos_et_al_dat.mat		- Data file containing bottom topography profile from Gelderloos et. al. (2021)
+
 
 
 
