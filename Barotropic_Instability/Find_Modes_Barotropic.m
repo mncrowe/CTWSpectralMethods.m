@@ -30,22 +30,30 @@ N = length(y);
 U = params.U(y);
 Uy = My*(U-U(end));
 f = params.f;
+nu = params.nu;
 
 I = eye(N);
 O = zeros(N);
 
 L = [I O O; O -I O; O O O];
-R = [k*diag(U) diag(Uy-f) k*I; f*I -k*diag(U) My; k*I My O];
+R = [k*diag(U)+1i*nu*My^2 diag(Uy-f) k*I; f*I -k*diag(U)-1i*nu*My^2 My; k*I My O];
 
 L(N+1,:) = 0;
 R(N+1,:) = [zeros(1,N) 1 zeros(1,2*N-1)];
 
+if nu > 0
+    L(1, :) = [My(1, :) zeros(1, 2*N)]; % no stress on u
+    R(1, :) = 0;
+end
+
 if BC == 1
     R(end,:) = [zeros(1,2*N-1) 1 zeros(1,N)];
+    L(end,:) = 0;
 end
 
 if BC == 2
     R(end,:) = [zeros(1,N) My(end,:) zeros(1,N)];
+    L(end,:) = 0;
 end
 
 [omega,phi] = Gen_EVP(L,-R,n,w0,method);

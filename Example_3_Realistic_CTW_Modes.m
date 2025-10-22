@@ -21,7 +21,7 @@ cyc_km_to_rad_m = @(k) k*(2*pi)/1e3;
 rad_m_to_cyc_km = @(k) k/(2*pi)*1e3;
 
 % N2 from exponential fit to Gelderloos data:
-N2 = @(z) 2e-4*exp(z/90)+1e-6;
+N2 = @(y,z) 2e-4*exp(z/90)+1e-6;
 
 % H from smoothed, windowed profile from Gelderloos data:
 load('Gelderloos_et_al_dat.mat')
@@ -31,29 +31,25 @@ H = @(y) smooth((ones(size(y))*interp1(yd,Hd,y1)).*(y<=y1)+interp1(yd,Hd,y).*(y<
 % U from exponential/Gaussian fit to Gelderloos data:
 U = @(y,z) 0.4*exp(-(y-9.5e4).^2/3e4^2).*exp(z/200);
 
+% M2 from U via thermal wind (M2 = -f*U_z):
+M2 = @(y,z) -f * 0.4*exp(-(y-9.5e4).^2/3e4^2).*exp(z/200) / 200;
+
 % create grid and parameters, use H between y = 1e4 and y = 1.85e5:
 grid = Create_Grid(H,Nz,2,Ly,Ny,type_y);
-params = Create_Params(U,N2,f,g,1,1);
+params = Create_Params(U,M2,N2,f,g,1,1);
 
 % plot stratification:
 figure
 z_plot = -(0:10:1800);
-semilogx(N2(z_plot),z_plot,'k','LineWidth',0.7)
+semilogx(N2(0,z_plot),z_plot,'k','LineWidth',0.7)
 grid on
 xlabel('N^2 (s^{-2})'); ylabel('z (m)')
 xlim([7e-7 2e-4])
 set(gca,'FontSize',12,'linewidth',0.7);
 
 % plot velocity:
-figure
-pcolor(grid.y/1e3,grid.z,U(grid.y,grid.z)); shading interp;
-xlabel('y (km)'); ylabel('z (m)')
-colormap(cmap2([],0)); colorbar
-hold on
-plot(grid.y(:,1)/1e3,-H(grid.y(:,1)),'k','LineWidth',0.7)
-rectangle('Position',[0 min(grid.z,[],'all') 3e2 -min(grid.z,[],'all')],'LineWidth',0.7)
-hold off
-set(gca,'FontSize',12,'linewidth',0.7);
+Plot_Mode(U(grid.y,grid.z),grid.y/1e3,grid.z,H(grid.y(:,1)),'y (km)','z (m)',[0 2e2])
+cb = colorbar; ylabel(cb,'U (m/s)')
 
 % create wavenumber domain and initial guesses for each mode:
 k = cyc_km_to_rad_m((0.2:0.2:7)*1e-3);
@@ -63,9 +59,9 @@ M = 3;      % number of modes to find
 n = 6;
 
 % initial values (determined by examining all solutions for k = 0.2e-3):
-omega(1,1) = cyc_day_to_rad_s(0.091865226818319);
-omega(1,2) = cyc_day_to_rad_s(0.015365038929509);
-omega(1,3) = cyc_day_to_rad_s(0.008279970626094);
+omega(1,1) = cyc_day_to_rad_s(0.093903153350806);
+omega(1,2) = cyc_day_to_rad_s(0.015539651145854);
+omega(1,3) = cyc_day_to_rad_s(0.008657303700164);
 
 % loop through modes and k values to find frequency curves for each mode:
 for im = 1:M
@@ -119,13 +115,4 @@ k_plot = cyc_km_to_rad_m(5*1e-3);
 [~,p_plot] = Find_Modes(grid,params,k_plot,n,omega(k==k_plot,3),0,'lm');
 
 % plot the pressure eigenfunction for this Mode III solution:
-figure
-pcolor(grid.y/1e3,grid.z,p_plot(:,:,1)); shading interp;
-colormap(cmap2([],0)); colorbar
-xlim([0 2e2])
-xlabel('y (km)'); ylabel('z (m)')
-hold on
-plot(grid.y(:,1)/1e3,-H(grid.y(:,1)),'k','LineWidth',0.7)
-rectangle('Position',[0 min(grid.z,[],'all') 2e2 -min(grid.z,[],'all')],'LineWidth',0.7)
-hold off
-set(gca,'FontSize',12,'linewidth',0.7);
+Plot_Mode(p_plot(:,:,1),grid.y/1e3,grid.z,H(grid.y(:,1)),'y (km)','z (m)',[0 2e2])

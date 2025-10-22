@@ -1,0 +1,36 @@
+function Plot_Mode(p,y,z,H,y_label,z_label,y_range,z_range)
+% Plots the input p as a surface and contour plot in y and z.
+
+arguments
+    p (:,:)
+    y (:,:)
+    z (:,:)
+    H (:,1) = 1
+    y_label = 'y'
+    z_label = 'z'
+    y_range = [min(y,[],"all"), max(y,[],"all")];
+    z_range = [min(z,[],"all"), max(z,[],"all")];
+end
+
+figure;
+
+pcolor(y,z,p)
+hold on
+xlabel(y_label); ylabel(z_label)
+shading interp
+contour(y,z,p,[-0.8,-0.4,-0.2,0,0.2,0.4,0.8],'k','LineWidth',0.7)
+plot(y(:,1),-H,'k','LineWidth',0.7)
+colormap(cmap2([],0,[],[],0))
+colorbar
+
+rectangle('Position',[y_range(1) z_range(1) y_range(2)-y_range(1) ],'LineWidth',0.7)
+
+%line([y(1,1) y(end,1)],[z(end,1) z(end,1)],'Color','black');
+%line([y(1,1) y(end,1)],[z(end,end) z(end,end)],'Color','black');
+%line([y(1,1) y(1,1)],[z(end,1) z(end,end)],'Color','black');
+%line([y(end,1) y(end,1)],[z(end,1) z(end,end)],'Color','black');
+hold off
+
+set(gca,'FontSize',12,'linewidth',0.7);
+
+end

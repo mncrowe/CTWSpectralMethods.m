@@ -1,19 +1,32 @@
-function Plot_Mode(p,y,z)
+function Plot_Mode(p,y,z,H,y_label,z_label,y_range,z_range)
 % Plots the input p as a surface and contour plot in y and z.
+
+arguments
+    p (:,:)
+    y (:,:)
+    z (:,:)
+    H (:,1) = 1
+    y_label = 'y'
+    z_label = 'z'
+    y_range = [min(y,[],"all"), max(y,[],"all")];
+    z_range = [min(z,[],"all"), max(z,[],"all")];
+end
 
 figure;
 
 pcolor(y,z,p)
 hold on
-xlabel('y'); ylabel('z')
+xlabel(y_label); ylabel(z_label)
 shading interp
-contour(y,z,p,[-0.8,-0.4,-0.2,0,0.2,0.4,0.8],'k','LineWidth',0.7)
+plot(y(:,1),-H,'k','LineWidth',0.7)
 colormap(cmap2([],0,[],[],0))
-colorbar
-line([y(1,1) y(end,1)],[z(end,1) z(end,1)],'Color','black');
-line([y(1,1) y(end,1)],[z(end,end) z(end,end)],'Color','black');
-line([y(1,1) y(1,1)],[z(end,1) z(end,end)],'Color','black');
-line([y(end,1) y(end,1)],[z(end,1) z(end,end)],'Color','black');
+cb = colorbar;
+cb_tick = get(cb,"XTick");
+if abs(min(p,[],"all") - cb_tick(1)) < 0.05 * abs(min(p,[],"all")); cb_tick = cb_tick(2:end); end
+if abs(max(p,[],"all") - cb_tick(end)) < 0.05 * abs(max(p,[],"all")); cb_tick = cb_tick(1:end-1); end
+contour(y,z,p,cb_tick,'k','LineWidth',0.7)
+rectangle('Position',[y_range(1) z_range(1) y_range(2)-y_range(1) z_range(2)-z_range(1)],'LineWidth',0.7)
+xlim(y_range); ylim(z_range)
 hold off
 
 set(gca,'FontSize',12,'linewidth',0.7);
